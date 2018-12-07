@@ -1,0 +1,64 @@
+# -- Global --
+{% block global %}
+global
+  log /dev/log local0 info
+  stats socket /var/run/{{ _haproxy.instance_name }}.stat user haproxy group haproxy mode 600 level admin
+  user haproxy
+  group haproxy
+  daemon
+
+  # Default ciphers to use on SSL-enabled listening sockets.
+  # For more information, see ciphers(1SSL). This list is from:
+  #  https://hynek.me/articles/hardening-your-web-servers-ssl-ciphers/
+  ssl-default-bind-ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS
+  ssl-default-bind-options no-sslv3
+
+{% endblock global %}
+# -- /Global --
+
+# -- defaults --
+{% block defaults %}
+defaults
+  mode http
+  log global
+  option dontlognull
+  option http-keep-alive
+  option redispatch
+  timeout http-request 10s
+  timeout queue 1m
+  timeout connect 5s
+  timeout client 2m
+  timeout server 2m
+  timeout http-keep-alive 10s
+  timeout check 5s
+  retries 3
+  maxconn 2000
+{% endblock defaults %}
+# -- /defaults
+
+{% block admin %}
+# -- Admin --
+listen admin
+  bind {% for bind in _haproxy.admin.binds %}{{ bind.ip }}:{{ bind.port }}{%if not loop.last%},{%endif%}{%endfor%}
+
+  stats enable
+  stats auth {{ _haproxy.admin.user }}:{{ _haproxy.admin.password }}
+  stats uri /monitor
+  stats show-node
+  stats show-desc instance name {{ _haproxy.instance_name }}
+  stats refresh 10s
+# -- /Admin --
+{% endblock admin %}
+
+# -- Frontends --
+{% block frontends %}
+# no frontends in base template
+{% endblock frontends %}
+# -- /Frontends --
+
+# -- Backends --
+{% block backends %}
+# No backends in base template
+{% endblock backends %}
+# -- /Backends --
+
