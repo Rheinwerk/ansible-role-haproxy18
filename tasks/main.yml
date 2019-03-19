@@ -66,7 +66,12 @@
       file: path="/etc/{{ _haproxy.instance_name }}/ssl" state=directory owner=haproxy group=haproxy mode=0755
 
     - name: Install SSL certificates and keys
-      copy: content="{{ item.value.data | b64decode }}" dest="/etc/{{ _haproxy.instance_name }}/ssl/{{ item.value.filename }}" mode=0640 owner=haproxy group=haproxy
+      copy:
+        content: "{{ item.value.data | b64decode }}"
+        dest: "/etc/{{ _haproxy.instance_name }}/ssl/{{ item.value.filename }}"
+        owner: haproxy
+        group: haproxy
+        mode: "0640"
       with_dict: "{{ _haproxy.ssl_certs|default({}) }}"
       notify:
         - "Reload haproxy {{ _haproxy.instance_name }}"
@@ -77,7 +82,12 @@
   when: _haproxy.ssl_certs is defined
 
 - name: Create HAProxy configuration file
-  template: src="etc/{{ _haproxy.instance_name }}/{{ _haproxy.instance_name}}.cfg.j2" dest="/etc/{{ _haproxy.instance_name }}/{{ _haproxy.instance_name}}.cfg" owner=haproxy group=haproxy mode=0640
+  template:
+    src: "etc/{{ _haproxy.instance_name }}/{{ _haproxy.instance_name }}.cfg.j2"
+    dest: "/etc/{{ _haproxy.instance_name }}/{{ _haproxy.instance_name}}.cfg"
+    owner: haproxy
+    group: haproxy
+    mode: "0640"
   notify:
     - "Reload haproxy {{ _haproxy.instance_name }}"
   when: _haproxy.use_default_config|default(no)
