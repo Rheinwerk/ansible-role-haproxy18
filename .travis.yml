@@ -1,0 +1,29 @@
+---
+language: python
+python: "3.7"
+
+# Use the new container infrastructure
+sudo: required
+dist: bionic
+
+# Install ansible
+addons:
+  apt:
+    packages:
+    - python-pip
+
+install:
+  # Install ansible
+  - pip install ansible
+
+  # Check ansible version
+  - ansible --version
+script:
+  # Basic role syntax check
+  - "find . -name '*.yml' -print0 | xargs -0 yamllint -c galaxy-yamllint.yaml"
+  - cd tests; ansible-playbook test.yml -i inventory --syntax-check
+  - cd tests; run_tests.sh
+  - sudo cat /etc/demo-haproxy/demo-haproxy.cfg
+
+notifications:
+  webhooks: https://galaxy.ansible.com/api/v1/notifications/
