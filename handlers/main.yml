@@ -9,8 +9,8 @@
 # value it was ever bound to, not the one the role currently
 # uses.
 
-- name: "Reload haproxy {{ _haproxy.instance_name }}"
-  service: name="{{ _haproxy.instance_name }}" state=reloaded
+- name: Reload haproxy demo-haproxy
+  service: name="demo-haproxy" state=reloaded
 
 - name: Restart rsyslog
   service: name="rsyslog" state=restarted
