@@ -5,11 +5,10 @@ python:
   - "3.7"
   - "3.8"
 env:
-  - ANSIBLE_VERSION=2.8
-  - ANSIBLE_VERSION=2.9
+  - ANSIBLE_PIP='ansible>=2.8,<2.9'
+  - ANSIBLE_PIP='ansible=>=2.9,<3.0'
 
 # Use the new container infrastructure
-sudo: required
 dist: bionic
 
 # Install ansible
@@ -19,7 +18,7 @@ addons:
     - python-pip
 
 install:
-  - pip install ansible
+  - pip install -v "$ANSIBLE_PIP" 
   - pip install yamllint
 
   # Check ansible version
