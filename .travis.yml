@@ -5,17 +5,15 @@ python:
   - "3.7"
   - "3.8"
 env:
-  - ANSIBLE_PIP='ansible>=2.8,<2.9'
-  - ANSIBLE_PIP='ansible>=2.9,<3.0'
-
-# Use the new container infrastructure
+  - ANSIBLE_PIP='ansible'
+  - ANSIBLE_PIP='ansible==2.8.*'
+  - ANSIBLE_PIP='ansible==2.9.*'
 dist: bionic
 
-# Install ansible
 addons:
   apt:
     packages:
-    - python-pip
+      - python-pip
 
 install:
   - pip install "$ANSIBLE_PIP"
@@ -28,7 +26,6 @@ install:
   - printf '[defaults]\nroles_path=../' >ansible.cfg
 
 script:
-  # Basic role syntax check
   - "find . -name '*.yml' -print0 | xargs -0 yamllint -c galaxy-yamllint.yaml"
   - cd tests; ansible-playbook test.yml -i inventory --syntax-check
   - cd tests; ./run_tests.sh
