@@ -22,6 +22,7 @@ jobs:
         os: [ 'ubuntu-18.04', 'ubuntu-20.04' ]
         # Python Default Versions: 3.6 in Bionic, 3.8 in Focal
         python-version: [ '3.6', '3.8' ]
+    continue-on-error: ${{ matrix.os == 'ubuntu-20.04' }}
 
     steps:
       - name: Check out the codebase
